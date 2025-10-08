@@ -1,0 +1,39 @@
+  int verfügbare_energie = day && !ldr ?  random(1000, 1800) : 0;
+
+  // Ohne Sonne gespeicherten Strom verwenden
+  bool genug_speicher = (day && stromspeicher > 625) || (!day && stromspeicher > 395);
+  if (genug_speicher && verfügbare_energie == 0) {
+    verfügbare_energie += day ? 625 : 395;
+    stromspeicher -= day ? 625 : 395;
+  }
+  // Tagsüber Strom speichern
+  if (day && verfügbare_energie > 1165) {
+    stromspeicher += verfügbare_energie - 1165;
+    verfügbare_energie = 1165;
+  }
+  // Beim vollen Speicher überschüssige Energie verwenden
+  if (stromspeicher > max_speicher) {
+    verfügbare_energie += stromspeicher - max_speicher;
+    stromspeicher = max_speicher;
+    if (verfügbare_energie>1165){
+      importierter_strom -=verfügbare_energie-1165;
+      verfügbare_energie=1165;
+    }
+  }
+
+  // Wenn der Speicher nicht reicht Strom importieren
+  if (verfügbare_energie == 0 && !genug_speicher) {
+    verfügbare_energie += day ? 625 : 395;
+    importierter_strom += day ? 625 : 395;
+  }
+
+  
+  // Serial.print("Light detected: ");
+  // Serial.println(light);
+  int energy = verfügbare_energie;
+  Serial.print("Energie: ");
+  Serial.println(energy);
+  Serial.print("Speicher: ");
+  Serial.println(stromspeicher);
+  distributeEnergy(energy, day);
+}

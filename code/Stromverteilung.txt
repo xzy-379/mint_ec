@@ -1,0 +1,67 @@
+void sendEnergy(char* gebäude, int value) {
+
+  char buffer[256];
+  buildJson(buffer, sizeof(buffer), value);
+  char* path = "/energie/zufuhr";
+  char buf[100];
+  strcpy(buf, gebäude);
+  strcat(buf, path);
+  client.publish(buf, buffer);
+}
+
+void distributeEnergy(int value, bool day) {
+  int used_energy = 0;
+  char buffer[256];
+  buildJson(buffer, sizeof(buffer), value);
+  client.publish("solarpark/energie/gesamt", buffer);
+
+  buffer[256];
+  buildJson(buffer, sizeof(buffer), stromspeicher);
+  client.publish("solarpark/energie/stromspeicher", buffer);
+
+  buffer[256];
+  buildJson(buffer, sizeof(buffer), importierter_strom);
+  client.publish("solarpark/energie/importiert", buffer);
+
+
+  used_energy += 155;
+  sendEnergy("feuerwache", 50);
+  sendEnergy("tiefgarage", 50);
+  sendEnergy("katastrophenschutz", 50);
+  sendEnergy("wetterstation", 5);
+  if (day) {
+    used_energy += 200;
+    sendEnergy("solarpark", 200);
+    used_energy += 270;
+    int extra_energy;
+    if (value > 1165) {
+      extra_energy = 540;
+
+    } else {
+      extra_energy = value - used_energy;  // maximal 575
+    }
+    sendEnergy("einkaufszentrum", 100 + extra_energy * 13 / 27);
+    sendEnergy("hochhaus", 20 + extra_energy * 1 / 3);
+    sendEnergy("flughafen", 150 + extra_energy * 5 / 27);
+    used_energy += extra_energy;
+
+  } else {
+    used_energy += 140;
+    sendEnergy("einkaufszentrum", 20);
+    sendEnergy("hochhaus", 20);
+    sendEnergy("solarpark", 100);
+    int extra_energy;
+    used_energy += 100;
+    if (value > 545) {
+      extra_energy = 150;
+    } else {
+      extra_energy = value - used_energy;
+    }
+    sendEnergy("flughafen", 100 + extra_energy);
+    used_energy += extra_energy;
+  }
+
+
+  buildJson(buffer, sizeof(buffer), used_energy);
+  client.publish("solarpark/energie/verbrauch", buffer);
+}

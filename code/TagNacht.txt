@@ -1,0 +1,22 @@
+#define DIGITAL_PIN 23  //GPI23
+
+void callback(char* topic, byte* payload, unsigned int length) {
+
+  Serial.println("Neuer Zeit: ");
+  Serial.println(topic);
+
+  StaticJsonDocument<BUFFER_SIZE> jsonDoc;
+  deserializeJson(jsonDoc, payload, length);
+
+  if (!jsonDoc["hour"].isNull()) {
+    int number = jsonDoc["hour"].as<int>();
+    server_time = number;
+    Serial.print("New Time: ");
+    Serial.println(number);
+  }
+  ldr = digitalRead(DIGITAL_PIN);
+
+  bool day = server_time <= 20 && server_time >= 8;
+
+
+

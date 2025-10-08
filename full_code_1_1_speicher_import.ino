@@ -66,7 +66,6 @@ void sendEnergy(char* gebäude, int value) {
   client.publish(buf, buffer);
 }
 
-//Feuerwache Hochhaus Tiefgarage
 void distributeEnergy(int value, bool day) {
   int used_energy = 0;
   char buffer[256];
@@ -147,7 +146,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
   digitalWrite(LED_BUILTIN, day ? HIGH : LOW);
 
-  String light = "No";
   int verfügbare_energie = day && !ldr ?  random(1000, 1800) : 0;
 
   // Ohne Sonne gespeicherten Strom verwenden

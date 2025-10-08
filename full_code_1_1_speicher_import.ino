@@ -74,7 +74,7 @@ void distributeEnergy(int value, bool day) {
   client.publish("solarpark/energie/stromspeicher", buffer);
 
   buildJson(buffer, sizeof(buffer), importierter_strom);
-  client.publish("solarpark/energie/importiert", buffer);
+  client.publish("solarpark/energie/importExport", buffer);
 
   used_energy += 155;
   sendEnergy("feuerwache", 50);
@@ -103,13 +103,13 @@ void distributeEnergy(int value, bool day) {
     sendEnergy("hochhaus", 20);
     sendEnergy("solarpark", 100);
     int extra_energy;
-    used_energy += 100;
+    used_energy += 150;
     if (value > 545) {
       extra_energy = 150;
     } else {
       extra_energy = value - used_energy;
     }
-    sendEnergy("flughafen", 100 + extra_energy);
+    sendEnergy("flughafen", 150 + extra_energy);
     used_energy += extra_energy;
   }
 
@@ -143,10 +143,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   int verfügbare_energie = day && !ldr ?  random(1000, 1800) : 0;
 
   // Ohne Sonne gespeicherten Strom verwenden
-  bool genug_speicher = (day && stromspeicher > 625) || (!day && stromspeicher > 395);
+  bool genug_speicher = (day && stromspeicher > 625) || (!day && stromspeicher > 445);
   if (genug_speicher && verfügbare_energie == 0) {
-    verfügbare_energie += day ? 625 : 395;
-    stromspeicher -= day ? 625 : 395;
+    verfügbare_energie += day ? 625 : 445;
+    stromspeicher -= day ? 625 : 445;
   }
   // Tagsüber Strom speichern
   if (day && verfügbare_energie > 1165) {
@@ -165,8 +165,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // Wenn der Speicher nicht reicht Strom importieren
   if (verfügbare_energie == 0 && !genug_speicher) {
-    verfügbare_energie += day ? 625 : 395;
-    importierter_strom += day ? 625 : 395;
+    verfügbare_energie += day ? 625 : 445;
+    importierter_strom += day ? 625 : 445;
   }
 
   

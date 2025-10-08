@@ -11,8 +11,6 @@ const char* mqtt_server = "mqtt.sva.de";
 #define MQTT_PASSWORD ""
 #define BUFFER_SIZE JSON_OBJECT_SIZE(300)
 
-#define LED_BUILTIN 2
-
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
@@ -23,7 +21,7 @@ int max_speicher = 4000;
 
 int importierter_strom = 0;
 
-#define DIGITAL_PIN 23  //GPI23
+#define DIGITAL_PIN 23  //Sensor
 boolean ldr = false;
 String light;
 
@@ -50,9 +48,9 @@ void setup_wifi() {
     Serial.print(".");
   }
   randomSeed(micros());
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+//  Serial.println("");
+//  Serial.println("WiFi connected");
+//  Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
 void sendEnergy(char* gebäude, int value) {
@@ -72,14 +70,11 @@ void distributeEnergy(int value, bool day) {
   buildJson(buffer, sizeof(buffer), value);
   client.publish("solarpark/energie/gesamt", buffer);
 
-  buffer[256];
   buildJson(buffer, sizeof(buffer), stromspeicher);
   client.publish("solarpark/energie/stromspeicher", buffer);
 
-  buffer[256];
   buildJson(buffer, sizeof(buffer), importierter_strom);
   client.publish("solarpark/energie/importiert", buffer);
-
 
   used_energy += 155;
   sendEnergy("feuerwache", 50);
@@ -134,8 +129,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (!jsonDoc["hour"].isNull()) {
     int number = jsonDoc["hour"].as<int>();
     server_time = number;
-    Serial.print("New Time: ");
-    Serial.println(number);
+//    Serial.print("New Time: ");
+//    Serial.println(number);
   }
   ldr = digitalRead(DIGITAL_PIN);
 
@@ -144,7 +139,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // main
  
-  digitalWrite(LED_BUILTIN, day ? HIGH : LOW);
 
   int verfügbare_energie = day && !ldr ?  random(1000, 1800) : 0;
 
@@ -179,10 +173,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // Serial.print("Light detected: ");
   // Serial.println(light);
   int energy = verfügbare_energie;
-  Serial.print("Energie: ");
-  Serial.println(energy);
-  Serial.print("Speicher: ");
-  Serial.println(stromspeicher);
+//  Serial.print("Energie: ");
+//  Serial.println(energy);
+//  Serial.print("Speicher: ");
+//  Serial.println(stromspeicher);
   distributeEnergy(energy, day);
 }
 
@@ -223,7 +217,6 @@ void setup() {
   reconnect();
 
   pinMode(DIGITAL_PIN, INPUT);   // Sensor
-  pinMode(LED_BUILTIN, OUTPUT);  // LED
 }
 
 void loop() {

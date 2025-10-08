@@ -30,7 +30,7 @@ void buildJson(char* buffer, size_t bufSize, int value) {
 
   // Einfache Werte
   doc["value"] = value;
-  doc["unit"] = "kW";
+  doc["unit"] = "kWh";
 
   // Serialisieren in Buffer
   serializeJson(doc, buffer, bufSize);
@@ -178,7 +178,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //  Serial.print("Speicher: ");
 //  Serial.println(stromspeicher);  
 
-//  Ausfall/Terror  
+//  Ausfall/Terror 
   if (random(1,20)>1){  
     distributeEnergy(energy, day);
 }

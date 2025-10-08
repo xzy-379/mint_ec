@@ -176,8 +176,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //  Serial.print("Energie: ");
 //  Serial.println(energy);
 //  Serial.print("Speicher: ");
-//  Serial.println(stromspeicher);
-  distributeEnergy(energy, day);
+//  Serial.println(stromspeicher);  
+
+//  Ausfall/Terror  
+  if (random(1,20)>1){  
+    distributeEnergy(energy, day);
+}
+  else {
+    sendEnergy("einkaufszentrum", 0);
+    sendEnergy("hochhaus", 0);
+    sendEnergy("solarpark", 0);
+    sendEnergy("tiefgarage", 0);
+    sendEnergy("feuerwache", 0);
+    sendEnergy("katastrophenschutz", 0);
+    sendEnergy("wetterstation", 0);
+    sendEnergy("flughafen", 0);
+  }
 }
 
 

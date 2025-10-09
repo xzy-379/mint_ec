@@ -179,7 +179,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //  Serial.println(stromspeicher);  
 
 //  Ausfall/Terror 
-  if (random(1,20)>1){  
+  if (random(1,100)>1){  
     distributeEnergy(energy, day);
 }
   else {

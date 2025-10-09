@@ -1,4 +1,5 @@
 # Solarpark 
+Mint-ec Projekt zu MQTT
 
 ## Features:
 - Tag/Nacht Zyklus
